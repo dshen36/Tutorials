@@ -1,0 +1,112 @@
+// video1: https://www.youtube.com/watch?v=AfWYO8t7ed4&index=1&list=PLoYCgNOIyGACDQLaThEEKBAlgs4OIUGif
+// Destructuring: taking things apart from a json object 
+	var foo = {
+		bar:1,
+		baz:2
+	};
+
+	//quick way of pulling all of the values from a json object and storing them
+		// into multiple variables.
+	var {bar, baz} = foo;
+
+	// easy way to call an object with a very large name as well. creates local
+		// image of the object so that you don't have to call the large var name 
+	var { bar } = veryLargeName; 
+
+	// The same can be done with arrays
+	var nums = ['one','two','three'];
+
+	// This notation automatically pulls out the first argument of the array
+	var [ firstNumber ] = nums;
+
+	// Useful for calling Promise.all(), which returns a single Promise that
+		// resolves when all of the promises in the iterable argument have resolved
+		// or when the iterable argument contains no promises. Rejects with
+		// the reason of the first promise that rejects. Used to make asynchronous actions synchronous
+	Promise.all([promise1, promise2]).then(function[results]) {
+		var [ results1, results2 ] = results; // can just call results1 for the first var
+	}
+
+	// Can be used to create objects as well
+	var foo = 2;
+
+	// If i want to use the same value and the same variable name, i can just include
+		// the entire variable and it will allocate both the var name and it's value as
+		// part of the object.
+	// much cleaner syntax
+	var obj = {
+		bar:1,
+		foo 
+		//same as saying foo:2
+	}
+
+	// You can also create an object of a dynamic variable name on the spot easily
+	// generate your own keys/variable namse
+	var name = "Dan"
+	var obj = {
+		["name"+name]: "some value"
+		//generates nameDan as a var/key name
+	}
+
+	// Javascript terminology:  Callback -  a function that takes in other functions
+		// as arguments or returns functions as its result is called a higher-order 
+		// function, and the functin that is passed as an argument is called a function
+
+	// Destructuring Arguments
+
+	// NORMAL WAY
+	function calcBmi(weight, height,max, callback) {
+		var bmi = weight/Math.pow(height,2);
+		if (bmi > max) {
+			console.log("you're overweight");
+		}
+		if (callback) {
+			callback(bmi);
+		}
+	}
+
+	// The problem here is that now the function can take up 4 parameters, but we're limited by
+		// what we can call due to the ordering of the variables, so we're going to have to do 
+		// something ugly/unneat where we pass in a null in the second function to ensure ordering
+		// of the variables
+	calcBmi(weight, height, 25);
+	calcBmi(weight, height, function() {...});
+
+	// ES6 WAY - YOU CAN PASS IN AN OBJECT.
+	// max = 25 is a default argument
+	// you can also change the naming of the parameters as 'varName: symbol'
+	function calcBmi({weight: w, height: h, max = 25, callback}) {
+		var bmi = w/Math.pow(h,2);
+		if (bmi > max) {
+			console.log("you're overweight");
+		}
+		if (callback) {
+			callback(bmi);
+		}
+	}
+
+	// Cleaner, and also less error prone
+	// Now ordering doesn't matter so you can call them out of order.
+	calcBmi({height, weight, max:35});
+	calcBmi({weight, height, callback: function() {...} });
+
+// Template Strings
+	// Something that people usually do is make a string where they can fill in the blanks
+	// and it's kind of ugly and annoying
+
+	var name = "Dan";
+	var thing = "code"
+	var greeting = "hi, i'm " + name + "\n"
+					+ "and i like to" + code  + ".";
+
+    // Template strings fixes this. it resembles coffee script where you can fill in the 
+    	// blanks without having to end the string at any point. this is done by using a
+    	// ` or a backtick.
+    // you can enter on new lines without stating \n
+    // you can ensure spacing is right etc.
+
+    var greet = `hi, my name is ${name},
+    			 and i like to ${thing}!`;
+
+
+

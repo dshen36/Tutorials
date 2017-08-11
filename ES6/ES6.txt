@@ -217,7 +217,7 @@
 			do.something(a =>  a++ )
 
 		// ARROW FUNCTIONS IS GOOD FOR MAPPING, FILTERING, SORTING (UNDERSCORE.JS methods)
-		[0,1,2].map(val => val++); //1,2,3
+		[0,1,2].map(val => ++val); //1,2,3
 
 		//lexicle context binding
 			// normal way

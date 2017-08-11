@@ -1,0 +1,42 @@
+// a modular loader - before, you would create your own modules and store them in seperate js files, and then call them from an html doc
+	// so that you can access all of the information. In addition to that, you might have some sort of script that would concatenate all of the
+	// modules together so that you would only need one file and minify. => evolved into modular loading system
+
+
+//basically the notion of webpack is that it will allow you to load in whatever api,languages you need at the time within that module or file. It therefore eliminates space and won't use it in other modules unless it required it.
+	// this won't create extra space because when you use webpack and call dedupe, it will get rid of duplicate lines of code, and won't be called twice(for production).
+---script.js---
+	require('./module1.js') //import that file into script.js
+	require('./module2.js') // gonna run this synchronously
+
+---module1.js---
+	var $ = require('jquery');
+	$('h1').html("new text"); //allows you to run jquery on the page. it only exists where it needs to exists. It wont get duplicated. It creates a module called jQuery and makes it accessible to all files
+
+---module2.js---	
+	var _ = require('lodash');
+	var people = [{...},{...}]; //sample array of objects
+
+	var femaleCount = _.filter(people, {gender: "Female"}).length; //underscore.js/lodash notation: read as 'filter people where gender == female' overall good querying tool
+
+---sample webpack.config.js ---
+	
+	var debug = process.env.NODE_ENV !== "production"; //determines if the node env in production or debugging mode
+	var webpack = require('webpack');
+
+	module.exports = {
+	  context: __dirname,
+	  devtool: debug ? "inline-sourcemap" : null, //if not prod, then in debug, then use inline source map, then otherwise no dev tool at all
+	  entry: "./js/scripts.js", //starting off here
+	  output: { //output here gonna be called scripts.min.js
+	    path: __dirname + "/js",
+	    filename: "scripts.min.js"
+	  },
+	  plugins: debug ? [] : [ //if in debug, then no plugins at all. just an empty array. if prod (not debug), then run all of the minifications
+	    new webpack.optimize.DedupePlugin(), //get rid of duplicate code
+	    new webpack.optimize.OccurenceOrderPlugin(),
+	    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }), //get rid of source maps and comments etc.
+	  ],
+	};
+
+

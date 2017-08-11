@@ -190,10 +190,7 @@
 		var child =  new Child();
 		child.bar();
 
-// GENERATOR FUNCTIONS- helps handle async
-	// https://www.youtube.com/watch?v=QO07THdLWQo
-
-	// arrow functions
+// ARROW FUNCTIONS
 		// normal way
 		var foo = function (a,b) {
 			return a + b;
@@ -276,4 +273,67 @@
 	import { foo as f} from "myModule";
 	console.log(f); //3
 
-// Async functions
+// Async functions + Generators
+// GENERATOR FUNCTIONS- helps handle async
+	// https://www.youtube.com/watch?v=QO07THdLWQo
+
+	// * allows you to define it as a generator
+		// basically an iterable function
+	// allows you to addd yield points
+		// used a as a pause/resume key in a generator function
+		// when you get to a yield, it will stop running the function while js will continue with everything else
+
+	var myGen = function*() {
+		var one = yield 1;
+		var two = yield 2;
+		var three = yield 3;
+		console.log(one,two,three); //this is actually going to be logged as
+									// undefined, undefined, undefined
+									// this is beacuse yield sits between the value and the var declaration
+										// so it never actually gets stored into the var since we're taking the value 
+									// this is fixed by taking the value and passing it back into gen.next(num) in the next line
+
+
+	}
+	var gen = myGen();
+
+	// this is because function runs from right to left, grab value and store into function
+	console.log(gen.next()); //{value:1, done: false} reads 1, and stops
+	console.log(gen.next()); //{value:2, done: false} reads 2..
+	console.log(gen.next()); //{value:3, done: false} reads 3...
+	console.log(gen.next()); //{value: undefined, done: true} reaches the end of the function bc no more yields
+	console.log(gen.next()); //errors becaues you can't call next on a closed generator
+
+	//good for handling promises: https://www.youtube.com/watch?annotation_id=annotation_1449687199&feature=iv&list=UUVTlvUkGslCV_h-nSAId8Sw&src_vid=QO07THdLWQo&v=obaSQBBWZLk
+
+	var myGen = function*() {
+		var one = yield $.get('/api/friends'); //good for calling APIs. make sure they come in syncrhonously
+											   //might return 'john'
+		var two = yield $.get('/api/profile'); //use john to get profile
+		var three = yield $.get('/api/tweets'); //etc
+	}
+
+	// allows you to run async functions to run syncronously
+	function smartCode(generator) {
+		// get the generator ready to run
+		var gen = generator();
+		//get my first yielded value
+		var yieldedVal = gen.next();
+		//if it's a promise, wait for it to fulfull and pass back to the generator
+		if (yieldedVal.then) { //YIELDS ARE PROMISE
+			yieldedVal.then(gen.next);
+		}
+	}
+
+	// how to get smartwrapping code:
+		//bluebird:  browser side
+			// example: https://i.gyazo.com/4926518dbafcf6ba14e71fff25ef63fb.png
+			// https://i.gyazo.com/36c3056990dae83094a1518db36e8ec0.png
+		//co: node.js backend
+		//q: included within angular (promise library within there)
+
+	//Async funcitons:
+		async function() { // notation for creating a generator function
+			var friend = await $.get("http://something.com/friends");//use instead of yield (async await syntax)
+			console.log(friends); //allows you to perform asynchronouos functions as synchronous function
+		}

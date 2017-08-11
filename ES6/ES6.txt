@@ -1,5 +1,5 @@
 // video1: https://www.youtube.com/watch?v=AfWYO8t7ed4&index=1&list=PLoYCgNOIyGACDQLaThEEKBAlgs4OIUGif
-// Destructuring: taking things apart from a json object 
+// DESTRUCTURING: taking things apart from a json object 
 	var foo = {
 		bar:1,
 		baz:2
@@ -90,7 +90,7 @@
 	calcBmi({height, weight, max:35});
 	calcBmi({weight, height, callback: function() {...} });
 
-// Template Strings
+// TEMPLATE STRINGS
 	// Something that people usually do is make a string where they can fill in the blanks
 	// and it's kind of ugly and annoying
 
@@ -108,5 +108,172 @@
     var greet = `hi, my name is ${name},
     			 and i like to ${thing}!`;
 
+// https://www.youtube.com/watch?v=LmL0Gh193M0&list=PLoYCgNOIyGACDQLaThEEKBAlgs4OIUGif&index=2
+// BLOCK SCOPING
+	// difference between block scope vs function scope:
+		// https://github.com/getify/You-Dont-Know-JS/blob/master/scope%20%26%20closures/ch3.md
+	// function scoping: allows variables to be seen within that function, and to any functions called within that function.
 
+	var a = 1;
 
+	function() {
+		var b = 2;
+	}
+	console.log(b); // normally this would not show up because of it's function scope being local
+					// to within the method
+	// block scoping
+		// used in if/else, blocks and loops
+		// basically hoists it's variable definitions within the scope to outside the scope
+		// something that is normally defined within the block can be seen outside
+		// used ONLY with the intent of inside that block. (assume that this means not within other function and is a temp variable)
+	var a = 1;
+
+	for (20) { //let is basically a new temporary var. this is because you can't define a variable
+			   // within a function in a method( i think... confirm later) correct way would be to 
+			   // to define a var at the beginning of the function and define a var within the function
+		let b = 2; // LET IS BLOCKED SCOPED, GONNA GET CHANGED LATER ON.
+	}
+	// the reason why let is so good because it DOESN'T HOIST the var declaration to the higher scope
+	// so that it creates a temp/local variable within the block without bringing it out to the super's scope.
+	console.log(b);
+
+	// CONSTS BEING BLOCKED SCOPE
+	const foo = 1;
+	if (true) {
+		const bar = 2;
+	}
+	console.log(bar); // not defined
+
+	//TL;DR - uses consts for everything because these values should not be changing that much.
+		// use lets for anything that is going to be changing but that should be a visual indicator that you need to be aware of
+
+// CLASSES
+	//Normal way
+		// construtor
+		function Parent() {
+			//const
+		}
+		Parent.prototype.foo = function() {}
+
+	// ES6 way
+		class Parent {
+			age = 34; //not part of the orig es6 design (es7) - to have static properties
+
+			construtor() {
+				//
+			}
+
+			foo() {
+				//
+			}
+
+			bar() {
+				//
+			}
+		}
+
+		var parent =  new Parent();
+		parent.foo(); //instance foo
+		Parent.foo(); //static foo
+		parent.age //34
+
+		class Child extends Parent {
+			construtor() {
+				super()
+			}
+
+			baz() {
+				//
+			}
+		}
+
+		var child =  new Child();
+		child.bar();
+
+// GENERATOR FUNCTIONS- helps handle async
+	// https://www.youtube.com/watch?v=QO07THdLWQo
+
+	// arrow functions
+		// normal way
+		var foo = function (a,b) {
+			return a + b;
+		}
+
+		// arrow function notation
+		var foo = (a,b) => {
+			return a + b;
+		}
+
+		//Callback implementation, and passing functions as arguments
+		do.something(function(a,b) {
+			return a+b;
+		}) 
+		// vs
+		do.something((a,b) => { return a + b; })
+
+		//IMPLICIT RETURNS - only used with one-liner code
+		do.something((a,b) =>  a + b )
+			// drops brackets and semi colon
+			// automatically returns what's after the => sign. again only for one-liner
+
+			//can also drop parenthesis if there is only one parameter
+			do.something(a =>  a++ )
+
+		// ARROW FUNCTIONS IS GOOD FOR MAPPING, FILTERING, SORTING (UNDERSCORE.JS methods)
+		[0,1,2].map(val => val++); //1,2,3
+
+		//lexicle context binding
+			// normal way
+			var module = {
+				age: 30,
+				foo: function() {
+					setTimeout( function() {
+						console.log(this.age);
+					}.bind(this), 100); //in order to access this.age, you need to BIND(this). very janky. not good
+				}
+			};
+
+			module.foo();
+
+			// lexicle/arrow binding
+			var module = {
+				age: 30,
+				foo: function() {
+					setTimeout(() => {
+						console.log(this.age); // automatically binds this
+					}, 100); 
+				}
+			};
+
+			module.foo();
+
+			//NOTE, BE CAREFUL OF CALLING => FUNCTIONS WITH JQUERY. BC ES6 => AUTOMATICALLY OVERWRITES THIS, 
+			// IT WILL NO LONGER USE THEIR DEFINITION OF THIS (point to some sort of event handler etc).
+			// meaning that you probably want to use function() instead of => with jquery
+
+// MODULES
+
+	//Normal way - super convoluted and confusing
+	module.exports.foo = function() {
+
+	};
+
+	var myModule = require("myModule");
+	var foo = myModule.foo
+
+	// ES6 way
+	import myModule from "myModule"; //reminds me of java;
+	import {foo, bar} from "myModule"; // can destructure into two variables and only use certain variables within the function
+									   // pull in the variables and functions that oyu need
+
+    // Exporting your own module so that you can use them in other functions
+	export default function() {...} // creates a module ready for other functions to use 
+	// allows you to call it in other files as: 
+	import myModule from "myModule";
+
+	// you can export only certain vars/functions if you want to as well.
+	export var foo = 3;
+	import { foo as f} from "myModule";
+	console.log(f); //3
+
+// Async functions
